@@ -1,5 +1,7 @@
 git-aman
 
+build.sh
+
 # IDE Settings
 .idea/
 .vscode/

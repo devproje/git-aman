@@ -3,30 +3,30 @@ package profile
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/devproje/git-aman/types"
 	"github.com/devproje/git-aman/util"
 	"github.com/devproje/plog/log"
 	"os"
-	"path/filepath"
 )
 
 type Profile struct {
-	id          int
-	DisplayName string
-	Name        string
-	Email       string
-	AuthData    Credential
+	Id          int        `json:"id"`
+	DisplayName string     `json:"display_name"`
+	Name        string     `json:"name"`
+	Email       string     `json:"email"`
+	AuthData    Credential `json:"credential"`
 }
 
 type Credential struct {
-	Server   string
-	Username string
-	Secret   string
+	Protocol types.Protocol `json:"protocol"`
+	Server   string         `json:"server"`
+	Username string         `json:"username"`
+	Secret   string         `json:"secret"`
 }
 
 var profs []Profile
 
-func (prof *Profile) Create(id int) {
-	prof.id = id
+func (prof *Profile) Create() {
 	profs = append(profs, *prof)
 
 	save()
@@ -34,7 +34,7 @@ func (prof *Profile) Create(id int) {
 
 func Read(id int) *Profile {
 	for _, prof := range profs {
-		if prof.id == id {
+		if prof.Id == id {
 			return &prof
 		}
 	}
@@ -44,7 +44,7 @@ func Read(id int) *Profile {
 
 func Delete(id int) {
 	for i, prof := range profs {
-		if prof.id == id {
+		if prof.Id == id {
 			profs = append(profs[:i], profs[i+1:]...)
 			break
 		}
@@ -55,7 +55,7 @@ func Delete(id int) {
 
 func QueryProfs() {
 	for _, prof := range profs {
-		log.Println("id: %d", prof.id)
+		log.Println("id: %d", prof.Id)
 		fmt.Printf("\t%s\n", prof.DisplayName)
 		fmt.Printf("\t%s\n", prof.Name)
 		fmt.Printf("\t%s\n", prof.Email)
@@ -65,8 +65,8 @@ func QueryProfs() {
 }
 
 func LoadAll() {
-	file := loadPath()
-	f, _ := os.ReadFile(file)
+	dir := loadPath()
+	f, _ := os.ReadFile(fmt.Sprintf("%s/profile.json", dir))
 	var data []Profile
 
 	err := json.Unmarshal(f, &data)
@@ -78,10 +78,14 @@ func LoadAll() {
 	profs = data
 }
 
+func ProfSize() int {
+	return len(profs)
+}
+
 func save() {
-	file := loadPath()
+	dir := loadPath()
 	data, _ := json.Marshal(profs)
-	err := os.WriteFile(file, data, 0644)
+	err := os.WriteFile(fmt.Sprintf("%s/profile.json", dir), data, 0644)
 	if err != nil {
 		log.Errorln(err)
 	}
@@ -89,7 +93,7 @@ func save() {
 
 func loadPath() string {
 	dir := util.GetDataDir()
-	file := filepath.Join(dir, "profile.json")
+	file := fmt.Sprintf("%s/profile.json", dir)
 	if _, err := os.Stat(file); err != nil {
 		if !os.IsNotExist(err) {
 			log.Panicln(err)
