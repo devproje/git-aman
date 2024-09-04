@@ -1,0 +1,8 @@
+git-aman
+
+# IDE Settings
+.idea/
+.vscode/
+
+# OS X File Cache
+.DS_Store
