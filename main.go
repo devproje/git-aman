@@ -50,6 +50,11 @@ func main() {
 	log.Printf("git-aman %s", VERSION)
 	log.Printf("DATA DIRECTORY: %s", util.GetDataDir())
 
+	if profId == 0 {
+		log.Errorln("profile id must not be null")
+		return
+	}
+
 	change(profile.Read(profId))
 }
 
@@ -122,31 +127,34 @@ func change(prof *profile.Profile) {
 		return
 	}
 
-	config, err := os.Open(fmt.Sprintf("%s/gitconfig", util.GetHome()))
+	_, err = os.Open(fmt.Sprintf("%s/.git-credentials", util.GetHome()))
 	if err != nil {
 		// TODO: create new one
 		log.Fatalln(err)
 		return
 	}
-	defer config.Close()
 
-	credential, err := os.Open(fmt.Sprintf("%s/.git-credentials", util.GetHome()))
-	if err != nil {
-		// TODO: create new one
-		log.Fatalln(err)
-		return
-	}
-	defer credential.Close()
-
-	// TODO: create change config
+	updateGitConfig(prof.Name, prof.Email)
 
 	uri := fmt.Sprintf("%s://%s:%s@%s",
 		prof.AuthData.Protocol,
 		prof.AuthData.Username,
 		prof.AuthData.Secret,
 		prof.AuthData.Server)
-	_, err = credential.Write([]byte(uri))
+	err = os.WriteFile(fmt.Sprintf("%s/.git-credentials", util.GetHome()), []byte(uri), 200)
 	if err != nil {
 		return
+	}
+}
+
+func updateGitConfig(name, email string) {
+	_, err := exec.Command("git", "config", "--global", "user.name", name).Output()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	_, err = exec.Command("git", "config", "--global", "user.email", email).Output()
+	if err != nil {
+		log.Fatalln(err)
 	}
 }

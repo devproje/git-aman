@@ -55,10 +55,10 @@ func Delete(id int) {
 
 func QueryProfs() {
 	for _, prof := range profs {
-		log.Println("id: %d", prof.Id)
-		fmt.Printf("\t%s\n", prof.DisplayName)
-		fmt.Printf("\t%s\n", prof.Name)
-		fmt.Printf("\t%s\n", prof.Email)
+		fmt.Printf("profile_id: %d\n", prof.Id)
+		fmt.Printf("\tdisplay_name: %s\n", prof.DisplayName)
+		fmt.Printf("\tuser: %s\n", prof.Name)
+		fmt.Printf("\temail: %s\n", prof.Email)
 	}
 
 	log.Printf("total profile size: %d\n", len(profs))
