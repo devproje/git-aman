@@ -1,18 +1,14 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
+	"github.com/devproje/git-aman/action"
 	"github.com/devproje/git-aman/profile"
-	"github.com/devproje/git-aman/types"
 	"github.com/devproje/git-aman/util"
 	"github.com/devproje/plog/log"
-	"golang.org/x/term"
 	"os"
 	"os/exec"
-	"strings"
-	"syscall"
 )
 
 var (
@@ -37,18 +33,23 @@ func main() {
 		return
 	}
 
+	log.Printf("git-aman %s", VERSION)
+	log.Printf("DATA DIRECTORY: %s", util.GetDataDir())
+
+	err := checkGit()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	if list {
 		profile.QueryProfs()
 		return
 	}
 
 	if create {
-		createProf()
+		action.ProfileCreate()
 		return
 	}
-
-	log.Printf("git-aman %s", VERSION)
-	log.Printf("DATA DIRECTORY: %s", util.GetDataDir())
 
 	if profId == 0 {
 		log.Errorln("profile id must not be null")
@@ -65,55 +66,6 @@ func checkGit() error {
 	}
 
 	return nil
-}
-
-func createProf() {
-	var displayName []byte
-	var user, email []byte
-	var protocol types.Protocol
-	var server, username []byte
-
-	var reader = bufio.NewReader(os.Stdin)
-
-	fmt.Printf("type your profile display name: ")
-	displayName, _ = reader.ReadBytes('\n')
-
-	fmt.Printf("type git config 'user.name': ")
-	user, _ = reader.ReadBytes('\n')
-
-	fmt.Printf("type git config 'user.email': ")
-	email, _ = reader.ReadBytes('\n')
-
-	fmt.Printf("type your git protocol: ")
-	raw, _ := reader.ReadBytes('\n')
-	protocol = types.CheckProto(string(raw))
-
-	fmt.Printf("type your git server: ")
-	server, _ = reader.ReadBytes('\n')
-
-	fmt.Printf("type your git username: ")
-	username, _ = reader.ReadBytes('\n')
-
-	fmt.Printf("type your git password: ")
-	secret, err := term.ReadPassword(syscall.Stdin)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	data := profile.Profile{
-		Id:          profile.ProfSize() + 1,
-		DisplayName: strings.ReplaceAll(string(displayName), "\n", ""),
-		Name:        strings.ReplaceAll(string(user), "\n", ""),
-		Email:       strings.ReplaceAll(string(email), "\n", ""),
-		AuthData: profile.Credential{
-			Protocol: protocol,
-			Server:   strings.ReplaceAll(string(server), "\n", ""),
-			Username: strings.ReplaceAll(string(username), "\n", ""),
-			Secret:   strings.ReplaceAll(string(secret), "\n", ""),
-		},
-	}
-
-	data.Create()
 }
 
 func change(prof *profile.Profile) {
