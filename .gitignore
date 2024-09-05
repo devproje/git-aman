@@ -1,8 +1,10 @@
 bak/
 
+.idea/
+.vscode/
+
 # EXECUTABLE
 git-aman
 
 # OBJECT
 *.o
-
