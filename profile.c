@@ -11,7 +11,7 @@ void add_profile(profile *prof)
 
 profile *get_profile(int pos)
 {
-	// TODO: read
+	return g_list_nth_data(list, pos);
 }
 
 void upt_profile(int pos, profile *prof)
@@ -21,6 +21,17 @@ void upt_profile(int pos, profile *prof)
 
 void del_profile(int pos)
 {
-	// TODO: delete
+	profile *data = get_profile(pos);
+	list = g_list_remove(list, data);
+}
+
+int get_prof_len()
+{
+	return g_list_length(list);
+}
+
+void destroy()
+{
+	g_list_free(list);
 }
 

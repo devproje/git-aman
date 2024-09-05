@@ -16,7 +16,7 @@ struct profile_credential {
 };
 
 struct _profile {
-	char 					  display[25];
+	char			  display[25];
 	struct profile_config 	  *config;
 	struct profile_credential *credential;
 };
@@ -25,5 +25,7 @@ void add_profile(profile *prof);
 profile *get_profile(int pos);
 void upt_profile(int pos, profile *prof);
 void del_profile(int pos);
+int get_prof_len();
+void destroy();
 
 #endif /* __PROFILE_H__ */

@@ -1,5 +1,6 @@
 {
 	"files.associations": {
-		"garray.h": "c"
+		"garray.h": "c",
+		"glib.h": "c"
 	}
 }

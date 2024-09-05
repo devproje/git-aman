@@ -3,7 +3,7 @@ LIBS = $(shell pkg-config --cflags glib-2.0)
 CFLAGS = -Wall 				     		\
 	 -Wextra 			     		\
 	 $(shell pkg-config --libs glib-2.0)
-OBJS = main.o profile.o
+OBJS = main.o profile.o input.o
 SRCS = $(OBJS:.o=.c)
 
 OUTPUT = git-aman
