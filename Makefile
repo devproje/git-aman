@@ -1,20 +1,15 @@
-CC = gcc
-LIBS = $(shell pkg-config --cflags glib-2.0)
-CFLAGS = -Wall 				     		\
-	 -Wextra 			     		\
-	 $(shell pkg-config --libs glib-2.0)
+include config.mk
+
 OBJS = main.o profile.o input.o prompt.o shell.o
 SRCS = $(OBJS:.o=.c)
-
-OUTPUT = git-aman
 
 all: $(OUTPUT)
 
 $(OUTPUT): $(OBJS)
-	$(CC) $(LIBS) -o $@ $^ $(CFLAGS) $(LDFLAGS)
+	$(CC) $(LIBS) -o $@ $^ $(CFLAGS)
 
 %.o: %.c
-	$(CC) $(LIBS) -c -o $@ $< $(CFLAGS) $(LDFLAGS)
+	$(CC) $(LIBS) -c -o $@ $< $(CFLAGS)
 
 clean:
 	rm -f $(OBJS)

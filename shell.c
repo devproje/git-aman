@@ -76,6 +76,11 @@ int cli_parser(char *cmd, profile *prof)
 		return 0;
 	}
 
+	if (strcmp(cmd, "cred.secret") == 0) {
+		// TODO: create secret input prompt
+		return 0;
+	}
+
 	if (strcmp(cmd, "?") == 0) {
 		help();
 		return 0;
