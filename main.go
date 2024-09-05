@@ -4,11 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"github.com/devproje/git-aman/action"
+	"github.com/devproje/git-aman/config"
 	"github.com/devproje/git-aman/profile"
 	"github.com/devproje/git-aman/util"
 	"github.com/devproje/plog/log"
 	"os"
-	"os/exec"
 )
 
 var (
@@ -17,7 +17,7 @@ var (
 	profId int
 )
 
-const VERSION = "1.0.0-alpha.1"
+const VERSION = "1.0.0-alpha.2"
 
 func init() {
 	flag.BoolVar(&list, "l", false, "list all profiles")
@@ -25,7 +25,8 @@ func init() {
 	flag.IntVar(&profId, "p", 0, "specify profile to use")
 	flag.Parse()
 
-	profile.LoadAll()
+	config.Conf = config.Load()
+	profile.Load()
 }
 
 func main() {
@@ -36,9 +37,9 @@ func main() {
 	log.Printf("git-aman %s", VERSION)
 	log.Printf("DATA DIRECTORY: %s", util.GetDataDir())
 
-	err := checkGit()
+	err := util.CheckGit()
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("git package not installed")
 	}
 
 	if list {
@@ -59,35 +60,22 @@ func main() {
 	change(profile.Read(profId))
 }
 
-func checkGit() error {
-	_, err := exec.Command("git", "--version").Output()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func change(prof *profile.Profile) {
-	err := checkGit()
-	if err != nil {
-		log.Panicln("git not installed\n")
-	}
-
 	if prof == nil {
 		log.Fatalln(fmt.Errorf("profile %d is null", profId))
 		return
 	}
 
-	_, err = os.Open(fmt.Sprintf("%s/.git-credentials", util.GetHome()))
+	secretPath := fmt.Sprintf("%s/.git-credentials", util.GetHome())
+	_, err := os.Open(secretPath)
 	if err != nil {
-		// TODO: create new one
-		log.Fatalln(err)
-		return
+		if _, err = os.Create(secretPath); err != nil {
+			log.Fatalln(err)
+			return
+		}
 	}
 
-	updateGitConfig(prof.Name, prof.Email)
-
+	util.UpdateGitConfig(prof.Name, prof.Email)
 	uri := fmt.Sprintf("%s://%s:%s@%s",
 		prof.AuthData.Protocol,
 		prof.AuthData.Username,
@@ -97,16 +85,6 @@ func change(prof *profile.Profile) {
 	if err != nil {
 		return
 	}
-}
 
-func updateGitConfig(name, email string) {
-	_, err := exec.Command("git", "config", "--global", "user.name", name).Output()
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	_, err = exec.Command("git", "config", "--global", "user.email", email).Output()
-	if err != nil {
-		log.Fatalln(err)
-	}
+	config.SetId(prof.Id)
 }

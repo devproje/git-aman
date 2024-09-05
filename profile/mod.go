@@ -64,18 +64,18 @@ func QueryProfs() {
 	log.Printf("total profile size: %d\n", len(profs))
 }
 
-func LoadAll() {
-	dir := loadPath()
-	f, _ := os.ReadFile(fmt.Sprintf("%s/profile.json", dir))
-	var data []Profile
+func Load() {
+	file := getProfs()
+	f, _ := os.ReadFile(file)
+	var raw []Profile
 
-	err := json.Unmarshal(f, &data)
+	err := json.Unmarshal(f, &raw)
 	if err != nil {
 		profs = make([]Profile, 0)
 		return
 	}
 
-	profs = data
+	profs = raw
 }
 
 func ProfSize() int {
@@ -83,15 +83,15 @@ func ProfSize() int {
 }
 
 func save() {
-	dir := loadPath()
-	data, _ := json.Marshal(profs)
-	err := os.WriteFile(fmt.Sprintf("%s/profile.json", dir), data, 0644)
+	file := getProfs()
+	pak, _ := json.Marshal(profs)
+	err := os.WriteFile(file, pak, 0644)
 	if err != nil {
 		log.Errorln(err)
 	}
 }
 
-func loadPath() string {
+func getProfs() string {
 	dir := util.GetDataDir()
 	file := fmt.Sprintf("%s/profile.json", dir)
 	if _, err := os.Stat(file); err != nil {
@@ -105,5 +105,5 @@ func loadPath() string {
 		}
 	}
 
-	return dir
+	return file
 }

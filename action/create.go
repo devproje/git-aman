@@ -2,6 +2,7 @@ package action
 
 import (
 	"bufio"
+	"github.com/devproje/git-aman/config"
 	"github.com/devproje/git-aman/profile"
 	"os"
 )
@@ -9,7 +10,7 @@ import (
 func ProfileCreate() {
 	var first = false
 	var reader = bufio.NewReader(os.Stdin)
-	var prof = profile.Profile{Id: profile.ProfSize() + 1}
+	var prof = profile.Profile{Id: config.Conf.LastId + 1}
 	setDisplayName(&prof, reader)
 	setConfigName(&prof, reader)
 	setConfigEmail(&prof, reader)
@@ -33,4 +34,5 @@ func ProfileCreate() {
 	}
 
 	prof.Create()
+	config.SetLastId(prof.Id)
 }
