@@ -1,10 +1,8 @@
+bak/
+
+# EXECUTABLE
 git-aman
 
-build.sh
+# OBJECT
+*.o
 
-# IDE Settings
-.idea/
-.vscode/
-
-# OS X File Cache
-.DS_Store
