@@ -6,7 +6,7 @@ static GList *list = NULL;
 
 void add_profile(profile *prof)
 {
-	// TODO: create
+	list = g_list_append(list, prof);
 }
 
 profile *get_profile(int pos)
