@@ -3,7 +3,7 @@
 
 #include "profile.h"
 
-profile *input_info();
+profile input_info();
 profile *edit_info();
 profile *select_prof();
 

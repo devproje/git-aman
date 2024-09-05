@@ -17,8 +17,8 @@ struct profile_credential {
 
 struct _profile {
 	char			  display[25];
-	struct profile_config 	  *config;
-	struct profile_credential *credential;
+	struct profile_config 	  config;
+	struct profile_credential credential;
 };
 
 void add_profile(profile *prof);

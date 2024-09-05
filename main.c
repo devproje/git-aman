@@ -3,6 +3,7 @@
 #include <error.h>
 
 #include "profile.h"
+#include "input.h"
 
 #define VERSION "1.0.0-alpha.3"
 
@@ -16,32 +17,18 @@ int main(int argc, char **argv)
 		return res;
 	}
 
-	struct profile_config conf = {
-		.name = "Project_IO",
-		.email = "me@projecttl.net"
-	};
-
-	struct profile_credential cred = {
-		.proto = "https",
-		.server = "github.com",
-		.username = "devproje",
-		.secret = "test"
-	};
-
-	profile prof = {
-		.display = "Default",
-		.config = &conf,
-		.credential = &cred
-	};
+	profile prof = input_info();
+	printf("Display Name: %s\n", prof.display);
+	printf("[CONFIG]\n");
+	printf("\tuser.name %s\n", prof.config.name);
+	printf("\tuser.email %s\n", prof.config.email);
+	printf("[CREDENTIAL]\n");
+	printf("\tcredential.proto %s\n", prof.credential.proto);
+	printf("\tcredential.server %s\n", prof.credential.server);
+	printf("\tcredential.username %s\n", prof.credential.username);
+	printf("\tcredential.secret %s\n", prof.credential.secret);
 
 	add_profile(&prof);
-	profile *data = get_profile(0);
-	
-	printf("BEFORE: %d\n", get_prof_len());
-	printf("%s\n", data->display);
-
-	del_profile(0);
-	printf("AFTER: %d\n", get_prof_len());
 
 	destroy();
 	return 0;
