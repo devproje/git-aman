@@ -104,8 +104,9 @@ int cli_parser(char *cmd, profile *prof)
 void help()
 {
 	printf("Available Commands:\n");
+	printf("Profile: display\n");
 	printf("Config: user.name, user.email\n");
 	printf("Credential: cred.proto, cred.server, cred.username, cred.secret\n");
-	printf("misc: ?, quit, yes\n");
+	printf("misc: ?, quit, yes\n\n");
 }
 
